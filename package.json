@@ -1,14 +1,22 @@
 {
-  "name": "bot_fulfillment",
+  "name": "dialogflow_nodejs_fulfillment",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment/issues"
+  },
+  "homepage": "https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dialogflow": "^1.2.0",
