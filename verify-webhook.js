@@ -1,5 +1,5 @@
 const verifyWebhook = (req, res) => {
-  let VERIFY_TOKEN = 'pusher-bot';
+  let VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN;
 
   let mode = req.query['hub.mode'];
   let token = req.query['hub.verify_token'];
