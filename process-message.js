@@ -14,8 +14,6 @@ const sessionClient = new dialogflow.SessionsClient(config);
 
 const sessionPath = sessionClient.sessionPath(projectID, sessionID);
 
-console.log(sessionPath);
-
 const FB_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 
 const sendTextMessage = (userID, text) => {
