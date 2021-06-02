@@ -3,14 +3,13 @@ const History = require('./models/history');
 const fetch = require('node-fetch');
 
 const predictStress = async (event) => {
-  const result = undefined;
+  let result;
   try {
     const data = await fetch(`http://127.0.0.1:5000/predict`, {
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(`[${event.message.text}]`),
     });
-
     result = await data.json();
   } catch (error) {
     console.log(error);
@@ -18,7 +17,7 @@ const predictStress = async (event) => {
 
   try {
     const history = await History.create({
-      username: event.sender.id,
+      userId: event.sender.id,
       text: event.message.text,
       labels: result[0].labels,
       confidence: result[0].confidence_score,
