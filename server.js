@@ -1,7 +1,7 @@
 require('dotenv').config({ path: './config.env' });
 const express = require('express');
-const verifyWebhook = require('./verify-webhook');
-const messageWebhook = require('./message-webhook');
+const verifyWebhook = require('./webhook/verify-webhook');
+const messageWebhook = require('./webhook/message-webhook');
 const connectDB = require('./config/db');
 
 const PORT = process.env.PORT || 4000;

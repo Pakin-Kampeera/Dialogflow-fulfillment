@@ -1,5 +1,5 @@
-const processMessage = require('./process-message');
-const History = require('./models/history');
+const processMessage = require('../utils/process-message');
+const History = require('../models/history');
 const fetch = require('node-fetch');
 
 const predictStress = async (event) => {
