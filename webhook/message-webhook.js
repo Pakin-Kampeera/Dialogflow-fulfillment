@@ -15,6 +15,18 @@ const predictStress = async (event) => {
     console.log(error);
   }
 
+  // Check total users
+  const duplicate = await History.findOne({ userId: event.sender.id });
+  if (duplicate) {
+    console.log('duplicate');
+  } else {
+    console.log('unique');
+  }
+
+  // Count total messages
+  const message = await History.countDocuments();
+  console.log(message);
+
   try {
     const history = await History.create({
       userId: event.sender.id,
@@ -34,7 +46,7 @@ module.exports = (req, res) => {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
         if (event.message && event.message.text) {
-          console.log(event);
+          // console.log(event);
           predictStress(event);
           processMessage(event);
         }
