@@ -1,5 +1,6 @@
 const processMessage = require('../utils/process-message');
 const History = require('../models/history');
+const Data = require('../models/data');
 const fetch = require('node-fetch');
 
 const predictStress = async (event) => {
@@ -15,17 +16,33 @@ const predictStress = async (event) => {
     console.log(error);
   }
 
-  // Check total users
-  const duplicate = await History.findOne({ userId: event.sender.id });
-  if (duplicate) {
-    console.log('duplicate');
-  } else {
-    console.log('unique');
+  try {
+    const oldUser = await History.findOne({ userId: event.sender.id });
+    if (oldUser) {
+      console.log('Old user');
+      await Data.findOneAndUpdate({}, { $inc: { comments: 1 } });
+    } else {
+      console.log('New user');
+      const hasDocument = await Data.findOneAndUpdate({}, { $inc: { users: 1, comments: 1 } });
+      console.log(hasDocument)
+      if (!hasDocument) {
+        console.log('create new doc')
+        Data.create({
+          users: 1,
+          comments: 1,
+          stress: 1,
+          non_stress: 1,
+        });
+        await Data.save();
+      }
+    }
+  } catch (error) {
+    console.log(error);
   }
 
   // Count total messages
-  const message = await History.countDocuments();
-  console.log(message);
+  // const message = await History.countDocuments();
+  // console.log(message);
 
   try {
     const history = await History.create({

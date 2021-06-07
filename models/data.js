@@ -2,17 +2,18 @@ const mongoose = require('mongoose');
 
 const DataSchema = new mongoose.Schema(
   {
-    userId: {
-      type: String,
-      required: true,
+    users: {
+      type: Number,
     },
-    sentences: [
-      {
-        text: { type: String, required: true },
-        label: { type: String, required: true },
-        confidence: { type: String, required: true },
-      },
-    ],
+    comments: {
+      type: Number,
+    },
+    stress: {
+      type: Number,
+    },
+    non_stress: {
+      type: Number,
+    },
   },
   { timestamps: { currentTime: () => Math.floor(Date.now() / 1000) } }
 );
