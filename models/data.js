@@ -11,7 +11,7 @@ const DataSchema = new mongoose.Schema(
     stress: {
       type: Number,
     },
-    non_stress: {
+    nonStress: {
       type: Number,
     },
   },

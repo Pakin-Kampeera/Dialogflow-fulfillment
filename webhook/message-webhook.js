@@ -24,25 +24,20 @@ const predictStress = async (event) => {
     } else {
       console.log('New user');
       const hasDocument = await Data.findOneAndUpdate({}, { $inc: { users: 1, comments: 1 } });
-      console.log(hasDocument)
+      console.log(hasDocument);
       if (!hasDocument) {
-        console.log('create new doc')
-        Data.create({
+        const data = await Data.create({
           users: 1,
           comments: 1,
           stress: 1,
-          non_stress: 1,
+          nonStress: 1,
         });
-        await Data.save();
+        await data.save();
       }
     }
   } catch (error) {
     console.log(error);
   }
-
-  // Count total messages
-  // const message = await History.countDocuments();
-  // console.log(message);
 
   try {
     const history = await History.create({
