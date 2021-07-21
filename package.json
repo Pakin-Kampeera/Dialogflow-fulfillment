@@ -1,30 +1,25 @@
 {
-  "name": "dialogflow_nodejs_fulfillment",
+  "name": "dialogflow_messenger",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment/issues"
-  },
-  "homepage": "https://github.com/Pakin-Kampeera/Dialogflow_Nodejs_fulfillment#readme",
   "dependencies": {
     "dialogflow": "^1.2.0",
-    "dialogflow-fulfillment": "^0.6.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "fb-messenger": "^2.3.1",
-    "mongoose": "^5.12.12",
+    "moment": "^2.29.1",
+    "mongoose": "^5.12.14",
     "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

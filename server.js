@@ -1,21 +1,18 @@
-require('dotenv').config({ path: './config.env' });
+require('dotenv').config();
+
 const express = require('express');
-const verifyWebhook = require('./webhook/verify-webhook');
-const messageWebhook = require('./webhook/message-webhook');
+const initWebhook = require('./routes/webhook');
 const connectDB = require('./config/db');
-
-const PORT = process.env.PORT || 4000;
-
 const app = express();
 
 app.use(express.json());
 
 connectDB();
 
-app.get('/', verifyWebhook);
+initWebhook(app);
 
-app.post('/', messageWebhook);
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
