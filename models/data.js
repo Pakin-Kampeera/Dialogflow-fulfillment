@@ -1,25 +1,16 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
 
-const DataSchema = new mongoose.Schema({
-    users: {
-        type: Number
+const dataSchema = new mongoose.Schema(
+    {
+        users: Number,
+        messages: Number,
+        stress: Number,
+        nonStress: Number,
+        cantTell: Number
     },
-    comments: {
-        type: Number
-    },
-    stress: {
-        type: Number
-    },
-    nonStress: {
-        type: Number
-    },
-    time: {
-        type: String,
-        default: moment().format('L')
-    }
-});
+    {timestamps: true}
+);
 
-const Data = mongoose.model('Data', DataSchema);
+const data = mongoose.model('Data', dataSchema);
 
-module.exports = Data;
+module.exports = data;

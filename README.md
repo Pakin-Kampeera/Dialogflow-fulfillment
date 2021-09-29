@@ -1,17 +1,23 @@
 # Fulfillment Engine
 
-## Installation
+## Technology
+
+-   Node.js + Express.js (RESTful framework)
+
+## Prerequisite
+
+-   Node.js
+
+## Install Dependency
 
 ```
-npm install
+yarn install
 ```
 
-## Setup environment variable
-
-1. Create new file ".env" in root directory
+\*\*\* Create Environment Variable (.env)
 
 ## Start
 
 ```
-npm run server
+yarn server
 ```

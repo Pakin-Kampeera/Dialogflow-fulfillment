@@ -1,33 +1,31 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
 
-const HistorySchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true
+const historySchema = new mongoose.Schema(
+    {
+        userId: {
+            type: String,
+            required: true
+        },
+        username: {
+            type: String,
+            required: true
+        },
+        message: {
+            type: String,
+            required: true
+        },
+        labels: {
+            type: String,
+            required: true
+        },
+        confidence: {
+            type: String,
+            required: true
+        }
     },
-    username: {
-        type: String,
-        required: true
-    },
-    message: {
-        type: String,
-        required: true
-    },
-    labels: {
-        type: String,
-        required: true
-    },
-    confidence: {
-        type: String,
-        required: true
-    },
-    time: {
-        type: String,
-        default: moment().format('L')
-    }
-});
+    {timestamps: true}
+);
 
-const History = mongoose.model('History', HistorySchema);
+const history = mongoose.model('History', historySchema);
 
-module.exports = History;
+module.exports = history;

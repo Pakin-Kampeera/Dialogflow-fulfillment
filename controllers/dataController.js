@@ -1,57 +1,128 @@
 const History = require('../models/history');
 const Data = require('../models/data');
+const Notification = require('../models/notification');
+const NonStress = require('../models/nonStressWords');
+const Stress = require('../models/stressWords');
+const Average = require('../models/average');
+const Report = require('../models/report');
+const {getUserPersona} = require('./actionController');
 
-//Test
 const storeData = async (event, result) => {
-    try {
-        const data = await fetch(`http://127.0.0.1:5000/predict`, {
-            headers: {'Content-Type': 'application/json'},
-            method: 'POST',
-            body: JSON.stringify(`[${event.message.text}]`)
+    const {data} = await getUserPersona(event.sender.id);
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    const latestDoc = await Average.find().sort({createdAt: -1}).limit(1);
+    const latestMonthDoc = latestDoc[0].createdAt.getMonth() + 1;
+    const latestYearDoc = latestDoc[0].createdAt.getFullYear();
+
+    console.log(latestDoc);
+
+    const oldUser = await Notification.findOne({userId: event.sender.id});
+    if (!oldUser) {
+        await Data.findOneAndUpdate({}, {$inc: {users: 1}});
+        const result = await Report.create({
+            userId: event.sender.id,
+            stress: 0,
+            nonStress: 0,
+            cantTell: 0
         });
-        result = await data.json();
-    } catch (error) {
-        console.log(error);
+        await result.save();
     }
 
-    try {
-        const oldUser = await History.findOne({userId: event.sender.id});
-        if (oldUser) {
-            console.log('Old user');
-            await Data.findOneAndUpdate({}, {$inc: {comments: 1}});
-        } else {
-            console.log('New user');
-            const hasDocument = await Data.findOneAndUpdate(
-                {},
-                {$inc: {users: 1, comments: 1}}
-            );
-            console.log(hasDocument);
-            if (!hasDocument) {
-                const data = await Data.create({
-                    users: 1,
-                    comments: 1,
-                    stress: 1,
-                    nonStress: 1
-                });
-                await data.save();
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
+    const latestReport = await Report.find({userId: event.sender.id})
+        .sort({createdAt: -1})
+        .limit(1);
 
-    try {
+    for (const elem of result) {
         const history = await History.create({
             userId: event.sender.id,
-            text: event.message.text,
-            labels: result[0].labels,
-            confidence: result[0].confidence_score
+            username: `${data.first_name} ${data.last_name}`,
+            message: elem.text,
+            labels: elem.labels,
+            confidence: elem.confidence_score
         });
 
         await history.save();
-    } catch (error) {
-        console.log(error);
+
+        if (currentMonth !== latestMonthDoc || currentYear !== latestYearDoc) {
+            let average;
+            if (elem.labels === 'stress') {
+                average = await Average.create({stress: 1});
+            } else if (elem.labels === 'non-stress') {
+                average = await Average.create({nonStress: 1});
+            } else {
+                average = await Average.create({cantTell: 1});
+            }
+            await average.save();
+        } else {
+            if (elem.labels === 'stress') {
+                latestDoc[0].stress += 1;
+                latestReport[0].stress += 1;
+            } else if (elem.labels === 'non-stress') {
+                latestDoc[0].nonStress += 1;
+                latestReport[0].nonStress += 1;
+            } else {
+                latestDoc[0].cantTell += 1;
+                latestReport[0].cantTell += 1;
+            }
+            await latestDoc[0].save();
+            await latestReport[0].save();
+        }
+
+        if (elem.labels === 'stress') {
+            await Data.findOneAndUpdate({}, {$inc: {messages: 1, stress: 1}});
+            for (const word of elem.words) {
+                const result = await Stress.findOneAndUpdate(
+                    {text: word},
+                    {$inc: {value: 1}}
+                );
+                if (!result) {
+                    const newWord = await Stress.create({
+                        text: word,
+                        value: 1
+                    });
+                    await newWord.save();
+                }
+            }
+        } else if (elem.labels === 'non-stress') {
+            await Data.findOneAndUpdate(
+                {},
+                {$inc: {messages: 1, nonStress: 1}}
+            );
+            for (const word of elem.words) {
+                const result = await NonStress.findOneAndUpdate(
+                    {text: word},
+                    {$inc: {value: 1}}
+                );
+                if (!result) {
+                    const newWord = await NonStress.create({
+                        text: word,
+                        value: 1
+                    });
+                    await newWord.save();
+                }
+            }
+        } else {
+            await Data.findOneAndUpdate({}, {$inc: {messages: 1, cantTell: 1}});
+        }
     }
+
+    await Notification.findOneAndUpdate(
+        {userId: event.sender.id},
+        {$set: {lastActive: new Date()}},
+        async function (error, result) {
+            if (!error) {
+                if (!result) {
+                    const notification = await Notification.create({
+                        userId: event.sender.id,
+                        lastActive: new Date()
+                    });
+
+                    await notification.save();
+                }
+            }
+        }
+    );
 };
 
 module.exports = storeData;

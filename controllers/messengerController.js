@@ -1,7 +1,7 @@
-const predictStress = require('./predictStress');
+const predictStress = require('./predictStressController');
 const processMessage = require('./dialogflowController');
+const {markSeenAction, typingAction} = require('./actionController');
 
-//Test
 const getWebhook = (req, res) => {
     let VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN;
 
@@ -19,16 +19,16 @@ const getWebhook = (req, res) => {
     }
 };
 
-
-//Test
 const postWebhook = (req, res) => {
     if (req.body.object === 'page') {
         req.body.entry.forEach((entry) => {
-            let webhook_event = entry.messaging[0];
-            console.log(webhook_event);
             entry.messaging.forEach((event) => {
                 if (event.message && event.message.text) {
-                    predictStress(event);
+                    markSeenAction(event.sender.id);
+                    typingAction(event.sender.id);
+                    if (event.message.text !== '!report') {
+                        predictStress(event);
+                    }
                     processMessage(event);
                 }
             });
